@@ -6,24 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".FirstFragment">
 
-    <ListView
-        android:id="@+id/logview_first"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/margin"
-        app:layout_constraintBottom_toTopOf="@id/button_first"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
     <Button
-        android:id="@+id/button_first"
+        android:id="@+id/button_first_admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/next"
+        android:layout_margin="@dimen/margin"
+        android:text="@string/admin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/button_first_user"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logview_first" />
+        />
+
+    <Button
+        android:id="@+id/button_first_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user"
+        android:layout_margin="@dimen/margin"
+        app:layout_constraintLeft_toLeftOf="@id/button_first_admin"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
