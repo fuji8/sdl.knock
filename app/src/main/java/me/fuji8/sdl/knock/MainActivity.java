@@ -279,10 +279,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return;
         }
         if (currentFragment.equals("Admin Fragment")) {
-            //if (message.time - 3e7 < adminDetectedTime && adminDetectedTime < message.time + 3e7) {
+            long now = System.currentTimeMillis();
+            if (now - 50 < adminDetectedTime && adminDetectedTime < now + 10) {
+                for(ChatMessage cm: AdminFragment.chatLog) {
+                    if (cm.content.equals(message.content)) {
+                        return;
+                    }
+                }
+
                 AdminFragment.chatLogAdapter.add(message);
                 AdminFragment.chatLogAdapter.notifyDataSetChanged();
-            // }
+            }
         }
     }
 
@@ -309,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.d(TAG, Long.toString(adminDetectedTime));
         if (this.state != State.Connected) {
             return;
         }
@@ -317,16 +323,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (currentFragment.equals("User Fragment")){
             float x = event.values[0];
             if(15 < x && x < 30) {
-                String content = "shake";
+                String content = UserFragment.input_username.getText().toString().trim();
                 messageSeq++;
-                long time = System.nanoTime();
+                long time = System.currentTimeMillis();
                 ChatMessage message = new ChatMessage(messageSeq, time, content, adapter.getName(), 0);
                 agent.send(message);
             }
        } else if (currentFragment.equals("Admin Fragment")) {
             float z = event.values[2];
             if (9.95 < z && z < 10) {
-                adminDetectedTime = System.nanoTime();
+                adminDetectedTime = System.currentTimeMillis();
             }
         }
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,8 @@ import me.fuji8.sdl.knock.databinding.FragmentUserBinding;
 public class UserFragment extends Fragment {
 
     private FragmentUserBinding binding;
+
+    public static EditText input_username;
 
     @Override
     public View onCreateView(
@@ -28,6 +31,8 @@ public class UserFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        input_username = view.findViewById(R.id.edittext_username);
 
         binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -11,7 +11,7 @@
         android:id="@+id/logview_first"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/margin"
+        android:layout_margin="40dp"
         app:layout_constraintBottom_toTopOf="@id/button_second"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
