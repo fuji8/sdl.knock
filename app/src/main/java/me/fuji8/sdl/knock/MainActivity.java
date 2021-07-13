@@ -106,14 +106,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         );
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         // sensor
         manager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (manager == null) {
