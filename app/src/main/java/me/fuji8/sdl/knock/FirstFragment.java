@@ -52,6 +52,7 @@ public class FirstFragment extends Fragment {
             }
         });
 
+        // log view
         chatLogAdapter = new ArrayAdapter<ChatMessage>(getActivity(),0, chatLog) {
             @Override
             public @NonNull
