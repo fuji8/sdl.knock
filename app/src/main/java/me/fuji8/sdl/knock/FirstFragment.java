@@ -25,10 +25,7 @@ import me.fuji8.sdl.knock.message.ChatMessage;
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
-    public static ListView logview;
 
-    public static final ArrayList<ChatMessage> chatLog = new ArrayList<>();
-    public static ArrayAdapter<ChatMessage> chatLogAdapter;
 
     @Override
     public View onCreateView(
@@ -44,44 +41,23 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonFirst.setOnClickListener(new View.OnClickListener() {
+        binding.buttonFirstAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment);
+                        .navigate(R.id.action_FirstFragment_to_AdminFragment);
             }
         });
 
-        // log view
-        chatLogAdapter = new ArrayAdapter<ChatMessage>(getActivity(),0, chatLog) {
+        binding.buttonFirstUser.setOnClickListener(new View.OnClickListener() {
             @Override
-            public @NonNull
-            View getView(int pos, @Nullable View view, @NonNull ViewGroup parent) {
-                if (view == null) {
-                    LayoutInflater inflater = LayoutInflater.from(getContext());
-                    view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-                }
-                ChatMessage message = getItem(pos);
-                assert message != null;
-                TextView text1 = view.findViewById(android.R.id.text1);
-                if (message.sender != null) {
-                    text1.setTextColor(message.sender.equals(MainActivity.adapter.getName()) ? Color.GRAY : Color.BLACK);
-                }
-                text1.setText(message.content);
-                return view;
+            public void onClick(View view) {
+                NavHostFragment.findNavController(FirstFragment.this)
+                        .navigate(R.id.action_FirstFragment_to_UserFragment);
             }
-        };
-        logview = binding.logviewFirst;
-        logview.setAdapter(chatLogAdapter);
-        final DateFormat fmt = DateFormat.getDateTimeInstance();
-        logview.setOnItemClickListener((parent, v, pos, id) -> {
-            ChatMessage msg = (ChatMessage) parent.getItemAtPosition(pos);
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(getString(R.string.msg_title, msg.seq, msg.sender))
-                    .setMessage(getString(R.string.msg_content, msg.content, fmt.format(new Date(msg.time))))
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
         });
+
+
     }
 
     @Override

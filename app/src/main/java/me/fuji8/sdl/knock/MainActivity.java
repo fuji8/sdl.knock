@@ -12,6 +12,7 @@ import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,7 +22,9 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -74,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // sensor
     private SensorManager manager;
     private Sensor gyroscope;
+    private Sensor accelerometer;
+
+    private String currentFragment = null;
+
+    private Long adminDetectedTime = 0l;
 
 
     @Override
@@ -92,6 +100,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                Log.e(TAG, "onDestinationChanged: "+destination.getLabel());
+                currentFragment = destination.getLabel().toString();
+            }
+        );
+
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,9 +121,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             finish();
             return;
         }
-        gyroscope = manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        if (gyroscope == null) {
-            Toast.makeText(this, R.string.toast_no_gyroscope, Toast.LENGTH_LONG).show();
+
+        accelerometer= manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (accelerometer == null) {
+            Toast.makeText(this, R.string.toast_no_accelerometer, Toast.LENGTH_LONG).show();
         }
 
         setState(State.Initializing);
@@ -263,8 +278,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (message.sound == 1) {
             return;
         }
-        FirstFragment.chatLogAdapter.add(message);
-        FirstFragment.chatLogAdapter.notifyDataSetChanged();
+        if (currentFragment.equals("Admin Fragment")) {
+            //if (message.time - 3e7 < adminDetectedTime && adminDetectedTime < message.time + 3e7) {
+                AdminFragment.chatLogAdapter.add(message);
+                AdminFragment.chatLogAdapter.notifyDataSetChanged();
+            // }
+        }
     }
 
     private void disconnect() {
@@ -278,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        manager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_FASTEST);
+        manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -290,24 +309,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float omegaZ = event.values[2];  // z-axis angular velocity (rad/sec)
-
+        Log.d(TAG, Long.toString(adminDetectedTime));
         if (this.state != State.Connected) {
             return;
         }
 
-        if (Math.abs(omegaZ) < 5) {
-           return;
+        if (currentFragment.equals("User Fragment")){
+            float x = event.values[0];
+            if(15 < x && x < 30) {
+                String content = "shake";
+                messageSeq++;
+                long time = System.nanoTime();
+                ChatMessage message = new ChatMessage(messageSeq, time, content, adapter.getName(), 0);
+                agent.send(message);
+            }
+       } else if (currentFragment.equals("Admin Fragment")) {
+            float z = event.values[2];
+            if (9.95 < z && z < 10) {
+                adminDetectedTime = System.nanoTime();
+            }
         }
 
-        String content = "shake";
-        messageSeq++;
-        long time = System.currentTimeMillis();
-        ChatMessage message = new ChatMessage(messageSeq, time, content, adapter.getName(), 0);
-        agent.send(message);
-        FirstFragment.chatLogAdapter.add(message);
-        FirstFragment.chatLogAdapter.notifyDataSetChanged();
-        FirstFragment.logview.smoothScrollToPosition(FirstFragment.chatLog.size());
     }
 
     @Override

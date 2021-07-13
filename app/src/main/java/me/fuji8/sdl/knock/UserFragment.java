@@ -33,7 +33,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(UserFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+                        .navigate(R.id.action_UserFragment_to_FirstFragment);
             }
         });
     }
